@@ -45,7 +45,7 @@
 #                   DATABASE: FACTORY
 #                     TABLES: CAR_INSTALLS
 #                             EXPERIMENTAL_MOTORS
-#                             EXPERIMENTAL_MOTOR_ENRICHED (will be created)
+#                             EXPERIMENTAL_MOTORS_ENRICHED (will be created)
 #
 #                   DATABASE: MARKETING
 #                     TABLES: CUSTOMER_DATA
@@ -137,8 +137,8 @@ if (_DEBUG_):
 #---------------------------------------------------
 #             CREATE NEW HIVE TABLE
 #---------------------------------------------------
-tempTable.write.mode("overwrite").saveAsTable('factory.experimental_motor_enriched', format="parquet")
-print("\tNEW ENRICHED TABLE CREATED: FACTORY.EXPERIMENTAL_MOTOR_ENRICHED")
+tempTable.write.mode("overwrite").saveAsTable('factory.experimental_motors_enriched', format="parquet")
+print("\tNEW ENRICHED TABLE CREATED: FACTORY.EXPERIMENTAL_MOTORS_ENRICHED")
 tempTable.show(n=5)
 
 
