@@ -29,6 +29,7 @@ CREATE EXTERNAL TABLE experimental_motor_enriched
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (  'separatorChar' = ','
                       , 'quoteChar'  = '"')
+-- IMPORTANT: Update S3BUCKET with S3 bucket location
 -- LOCATION '<S3BUCKET>'
 LOCATION 's3a://usermarketing-cdp-demo/gdeleon/report/'
 tblproperties('skip.header.line.count' = '1');
