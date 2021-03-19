@@ -1,8 +1,8 @@
 CREATE DATABASE IF NOT EXISTS factory;
-USE factory;
+CREATE DATABASE IF NOT EXISTS reports;
 
-DROP TABLE IF EXISTS experimental_motor_enriched;
-CREATE EXTERNAL TABLE experimental_motor_enriched
+DROP TABLE IF EXISTS factory.experimental_motor_enriched;
+CREATE EXTERNAL TABLE factory.experimental_motor_enriched
   (  serial_no         STRING
    , vin               STRING
    , model             STRING
@@ -29,33 +29,24 @@ CREATE EXTERNAL TABLE experimental_motor_enriched
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (  'separatorChar' = ','
                       , 'quoteChar'  = '"')
--- IMPORTANT: Update S3BUCKET with S3 bucket location
+-- IMPORTANT: Update <S3BUCKET> with the location of dataset and remove comment tag.
 -- LOCATION '<S3BUCKET>'
-LOCATION 's3a://usermarketing-cdp-demo/gdeleon/report/'
 tblproperties('skip.header.line.count' = '1');
 
 
--- ERROR IN PARTS FOUND BETWEEN October 22 and October 24 (26 parts)
-select sale_date, vin, name, address, latitude, longitude FROM experimental_motor_enriched where sale_date between CAST('2020-10-22' AS DATE) AND CAST('2020-10-24' AS DATE) order by sale_date  desc;
+
+-- LIST OF ALL BETA ENGINES
+CREATE VIEW reports.beta_engines AS
+  SELECT model, latitude, longitude
+    FROM factory.experimental_motor_enriched;
 
 
 
---- TEST PURPOSE ---
--- 2020-10-24	4
--- 2020-10-23	15
--- 2020-10-22	7
-select sale_date, count(sale_date) FROM experimental_motor_enriched where sale_date between CAST('2020-10-22' AS DATE) AND CAST('2020-10-24' AS DATE) group by sale_date order by 1 desc;
-
-select sale_date, count(sale_date) FROM experimental_motor_enriched group by sale_date order by 2 desc;
-
-select part_no, count(part_no) FROM experimental_motor_enriched group by part_no order by 2 desc;
-
-select factory_no, count(factory_no) FROM experimental_motor_enriched group by factory_no order by 2 desc;
-
-select * FROM experimental_motor_enriched LIMIT 10;
-
-describe formatted experimental_motor_enriched;
-
-
-
-
+-- RECALL NEEDED:
+-- Parts created BETWEEN October 22 and October 24 were found
+-- to be defective and need to be recalled.
+CREATE VIEW reports.beta_engine_recall AS
+  SELECT sale_date, model, vin, name, address, latitude, longitude
+    FROM factory.experimental_motor_enriched
+    WHERE sale_date BETWEEN CAST('2020-10-22' AS DATE) AND CAST('2020-10-24' AS DATE)
+    ORDER BY sale_date DESC;
